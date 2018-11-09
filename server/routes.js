@@ -66,10 +66,13 @@ module.exports = function(app) {
 	{
 		var form = new formidable.IncomingForm();
 		var fileName = app.guid()
-		form.on('file', function(field, file) {
+		form.on('file', function(type, file) {
 			const gallery =  __dirname + '/../uploads';
 		// rename the incoming webm stream file so it is unique before we save it to disk //
 			fs.rename(file.path, gallery +'/'+ fileName + '.jpg', function( e ) { });
+		});
+		form.on('field', function(name, field) {
+			console.log('field', name, JSON.parse(field))
 		});
 		form.on('end', function() { res.send('ok');});
 		form.parse(req, function(err, fields, file) { });
