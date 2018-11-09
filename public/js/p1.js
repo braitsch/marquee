@@ -1,42 +1,95 @@
 
 $(function() {
 
-	let thumb = {};
-	let image = {};
-	let file = { url : '/img/slow-magic.jpg' };
+	let image = { url: '/img/slow-magic.jpg' };
+	let thumb = { mode:'normal', crop:{w:500, h:500}, rw:16, rh:9 };
 
 	const maxFileSize = 1;
 
 	const $viewer = $('.viewer');
 	const $image = $('.viewer img');
-	const $marquee = $('.marquee');
-	const btnSelect = $('.btn-select');
-	const btnUpload = $('.btn-upload');
-	const fileDialog = $('.file-dialog');
+	const $marquee = $('.marquee');;
+	const $style = $('.thumb-settings .style');
+	const $color = $('.thumb-settings .color');
+	const $width = $('.thumb-settings .w');
+	const $height = $('.thumb-settings .h');
+	const $select = $('.btn-select');
+	const $upload = $('.btn-upload');
+	const $fileInput = $('.file-dialog')
 
-	btnSelect.click(function(e){  fileDialog.click(); });
-	btnUpload.click(function(e){
+/*
+	dropdowns & inputs
+*/
+
+	$style.change(function(){
+		thumb.mode = this.value.toLowerCase();
+		if (thumb.mode == 'normal'){
+			$width.val(''); $height.val('');
+		}	else if (thumb.mode == 'fixed size'){
+			$width.val(thumb.crop.w);
+			$height.val(thumb.crop.h);
+		}	else if (thumb.mode == 'fixed ratio'){
+			$width.val(thumb.rw);
+			$height.val(thumb.rh);
+		}
+		$width.prop('disabled', thumb.mode == 'normal');
+		$height.prop('disabled', thumb.mode == 'normal');
+	});
+	$color.change(function(){
+		$marquee.css('border-color', this.value.toLowerCase());
+	});
+	$width.change(function(){
+		let w = $(this).val();
+		if (w < 1) w = 1;
+		if (w > image.nw) w = image.nw;
+		if (thumb.mode == 'fixed size'){
+			thumb.crop.w = w;
+		}	else if (thumb.mode == 'fixed ratio'){
+			thumb.rw = w;
+		}
+		$(this).val(w);
+	});
+	$height.change(function(){
+		let h = $(this).val();
+		if (h < 1) h = 1;
+		if (h > image.nh) h = image.nh;
+		if (thumb.mode == 'fixed size'){
+			thumb.crop.h = h;
+		}	else if (thumb.mode == 'fixed ratio'){
+			thumb.rh = h;
+		}
+		$(this).val(h);
+	});
+
+/*
+	select and upload image
+*/
+
+	$select.click(function(e){  $fileInput.click(); });
+	$upload.click(function(e){
 		let mx = (image.nw/image.w);
 		let my = (image.nh/image.h);
 		thumb.crop.x = (thumb.crop.x-image.x) * mx;
 		thumb.crop.y = (thumb.crop.y-image.y) * my;
-		thumb.crop.w *= mx;
-		thumb.crop.h *= my;
+		if (thumb.mode != 'fixed size'){
+			thumb.crop.w *= mx;
+			thumb.crop.h *= my;
+		}
 		var request = new XMLHttpRequest();
 			request.open('POST', '/upload');
 		var formData = new FormData();
 			formData.append('data', JSON.stringify(thumb.crop));
-			formData.append('file', new File([file.blob], 'photo.'+file.ext, { type: 'image/'+(file.ext=='jpg' ? 'jpeg' : file.ext)}));
+			formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
 		request.send(formData);
 	})
 
-	fileDialog.change(function(e) {
+	$fileInput.change(function(e) {
 		if (this.files && this.files[0]) {
 			if (maxFileSize && this.files[0].size/1000/1000 > maxFileSize){
 				alert('The maximum file size for uploads in this demo is '+maxFileSize+'MB.');
 			}	else{
-				let url = fileDialog.val().replace(/C:\\fakepath\\/i, '');
-				file.ext = url.split('.').pop();
+				let url = $fileInput.val().replace(/C:\\fakepath\\/i, '');
+				image.ext = url.split('.').pop();
 				convertBlobToImage(this.files[0]);
 			}
 		}
@@ -44,13 +97,13 @@ $(function() {
 
 	const getImageAsBlob = async function(url)
 	{
-		file.ext = url.split('.').pop();
+		image.ext = url.split('.').pop();
 		convertBlobToImage(await fetch(url).then(r => r.blob()));
 	}
 
 	const convertBlobToImage = function(blob)
 	{
-		file.blob = blob;
+		image.blob = blob;
 		var reader = new FileReader();
 		reader.onload = function (e) {
 			$image.attr('src', e.target.result);
@@ -60,44 +113,32 @@ $(function() {
 				let dh = img.height/img.naturalHeight;
 				if (dw > dh){
 					let w = img.naturalWidth * dh;
-					image = {
-						x	:(img.width-w)/2,
-						y	:0,
-						w	:w,
-						h	:img.height
-					};
+					image.x	= (img.width-w)/2;
+					image.y	= 0;
+					image.w	= w;
+					image.h	= img.height;
 				}	else{
 					let h = img.naturalHeight * dw;
-					image = {
-						x	:0,
-						y	:(img.height-h)/2,
-						w	:img.width,
-						h	:h
-					};
+					image.x	= 0;
+					image.y	= (img.height-h)/2;
+					image.w	= img.width;
+					image.h	= h;
 				}
 				image.nw = img.naturalWidth;
 				image.nh = img.naturalHeight;
-				//$marquee.css({top:image.y, left:image.x, width:image.w, height:image.h});
-				//$marquee.show();
 			}, 100)
 		}
 		reader.readAsDataURL(blob);
 	}
 
-	getImageAsBlob(file.url)
+	getImageAsBlob(image.url)
 
 	/*
-		thumbnail generator
+		marquee tool
 	*/
-
 
 	$marquee.hide();
 	$image.on('dragstart', function(e) { e.preventDefault(); });
-	var clearThumbnail = function()
-	{
-		$marquee.hide();
-		thumb.crop = { };
-	}
 	var getMousePosition = function(e)
 	{
 		var mouse = { x:e.clientX, y:e.clientY };
@@ -110,9 +151,7 @@ $(function() {
 		if (!isWithinBounds(mouse)) return;
 		thumb.crop.w = mouse.x - thumb.crop.x;
 		thumb.crop.h = mouse.y - thumb.crop.y;
-		if (thumb.mode == 'fixed ratio'){
-			thumb.crop.h = thumb.crop.w * (thumb.ratio.height/thumb.ratio.width);
-		}
+		if (thumb.mode == 'fixed ratio') thumb.crop.h = thumb.crop.w * (thumb.rh/thumb.rw);
 		$marquee.css({ width:thumb.crop.w, height:thumb.crop.h});
 	}
 	var isWithinBounds = function(p)
@@ -127,20 +166,22 @@ $(function() {
 	{
 		var mouse = getMousePosition(e);
 		if (!isWithinBounds(mouse)) return;
-		thumb.crop = { x:mouse.x, y:mouse.y };
-		$marquee.css({ left:thumb.crop.x, top:thumb.crop.y});
-	// allow resizing //
-		if (thumb.mode != 'fixed size'){
+		thumb.crop.x = mouse.x;
+		thumb.crop.y = mouse.y;
+		if (thumb.mode == 'fixed size'){
+			let dx = (image.nw - thumb.crop.w) * (image.w/image.nw);
+			let dy = (image.nh - thumb.crop.h) * (image.h/image.nh);
+			if (thumb.crop.x > dx + image.x) thumb.crop.x = dx + image.x;
+			if (thumb.crop.y > dy + image.y) thumb.crop.y = dy + image.y;
+			let w = thumb.crop.w * (image.w/image.nw);
+			let h = thumb.crop.h * (image.h/image.nh);
+			$marquee.css({ top:thumb.crop.y, left:thumb.crop.x, width:w, height:h });
+		}	else{
+		// allow resizing //
 			$image.bind("mousemove", resize);
 			$marquee.bind("mousemove", resize);
 			$image.css('cursor', 'crosshair');
-			$marquee.css({ width: 0, height: 0 });
-		}	else{
-	// fixed size mode //
-			$marquee.css({
-				width	:thumb.width * ($image.width()/image.width),
-				height	:thumb.height * ($image.height()/image.height)
-			});
+			$marquee.css({ top:thumb.crop.y, left:thumb.crop.x, width:0, height:0 });
 		}
 		$marquee.show();
 	}
@@ -150,7 +191,6 @@ $(function() {
 		$image.unbind("mousemove", resize);
 		$marquee.unbind("mousemove", resize);
 	}
-
 	$(window).bind("mouseup", onMouseUp);
 	$image.bind("mousedown", onMouseDown);
 	$marquee.bind("mousedown", onMouseDown);
