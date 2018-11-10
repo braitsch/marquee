@@ -3,7 +3,7 @@ extends layout
 
 block content
 	nav.navbar.navbar-expand.navbar-light.bg-light
-		a.navbar-brand(href='#') pushpop
+		a.navbar-brand(href='#') marquee
 		ul.navbar-nav.ml-auto
 			li.nav-item
 				a(href='https://github.com/braitsch/pushpop.js').btn.btn-outline-success Documentation
@@ -11,44 +11,52 @@ block content
 				button.btn.navbar-btn.btn-outline-success#donate-btn Buy Me A Beer
 
 	.header
-		| pushpop is browser based image crop tool &amp; thumbnail generator similar to the marquee/crop tool in Photoshop.
-	.demo
-		.title Click &amp; Drag to Define Crop Area
-		.viewer
-			img
-			.marquee
-		.progress
-			.progress-bar.progress-bar-striped.active(role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100")
-		.thumb-settings.form-inline
-			.form-group
-				label.ts Style
-				select.form-control.style
-					option Normal
-					option Fixed Ratio
-					option Fixed Size
-				label Color
-				select.form-control.color
-					option Black
-					option(selected) White
-					option Red
-					option Blue
-					option Yellow
-					option Gray
-					option Orange
-					option Green
-					option Purple
-				label Width
-				input(type='number' disabled).w.form-control
-				label Height
-				input(type='number' disabled).h.form-control
-		input(type='file' accept='.png, .jpg, .jpeg, .gif' style="display: none").file-dialog
-		button.btn.btn-success.btn-select Select Image
-		button.btn.btn-primary.btn-upload Generate Thumbnail
+		| A browser based image cropping tool similar to the marquee/crop tool in Photoshop.
+	.content
+		.demo
+			.title Click &amp; Drag to Define Crop Area
+			.viewer
+				img
+				.marquee
+			.progress
+				.progress-bar.progress-bar-striped.active(role="progressbar" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100")
+			.thumb-settings.form-inline
+				.form-group
+					label.ts Style
+					select.form-control.style
+						option Normal
+						option Fixed Ratio
+						option Fixed Size
+					label Color
+					select.form-control.color
+						option Black
+						option(selected) White
+						option Red
+						option Blue
+						option Yellow
+						option Gray
+						option Orange
+						option Green
+						option Purple
+					label Width
+					input(type='number' disabled).w.form-control
+					label Height
+					input(type='number' disabled).h.form-control
+			input(type='file' accept='.png, .jpg, .jpeg, .gif' style="display: none").file-dialog
+			button.btn.btn-success.btn-select Select Image
+			button.btn.btn-primary.btn-upload Generate Thumbnail
+		.gallery
+			p All files uploaded using this demo are <b>automatically deleted after three minutes</b>.
+			.grid
+				- for (var i = 10; i >= 0; i--) {
+					.gridItem
+						.table
+							.tcell
+								img(src='/img/slow-magic.jpg')
+				-}
 
-	p All files uploaded using this demo are <b>automatically deleted after three minutes</b>.
 
 	.footer
-
 	include modal-pop
 	include modal-donate
 
