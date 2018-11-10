@@ -1,7 +1,5 @@
 #marquee {
-  float: left;
   width: 580px;
-  margin-left: 20px;
   padding: 10px 20px;
   border: 1px solid #ccc;
 }
@@ -68,8 +66,5 @@
 }
 #marquee .btn {
   width: 49.5%;
-  float: left;
-}
-#marquee .btn-upload {
-  margin-left: 1%;
+  display: inline-block;
 }

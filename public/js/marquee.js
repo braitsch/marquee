@@ -146,6 +146,7 @@ function Marquee(){
 		image.nh = img.naturalHeight;
 		thumb.x = 0; thumb.y = 0; thumb.w = 0; thumb.h = 0;
 		$cropper.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
+		$cropper.hide();
 	}
 
 	getImageAsBlob(image.url);
@@ -207,6 +208,7 @@ function Marquee(){
 			$cropper.bind("mousemove", resize);
 			$cropper.css({ top:thumb.y, left:thumb.x, width:0, height:0 });
 		}
+		$cropper.show();
 	}
 	var onMouseUp = function()
 	{

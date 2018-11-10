@@ -5,9 +5,6 @@ html {
 body {
   margin: 0 0 60px;
 }
-/*
-	navigation
-*/
 .navbar .btn {
   min-width: 100px;
   margin-right: 5px;
@@ -19,9 +16,26 @@ body {
   text-align: center;
   margin-bottom: 20px;
 }
+.header .logo {
+  width: 200px;
+  display: block;
+  margin: auto;
+}
 .content {
   width: 100%;
+}
+.content #marquee {
   margin: auto;
+}
+.footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 60px;
+  width: 100%;
+  padding-top: 10px;
+  text-align: center;
+  background-color: #eee;
 }
 .modal-download .modal-content {
   width: 30vw;
@@ -38,57 +52,6 @@ body {
 }
 .modal-download .btn {
   width: 100%;
-}
-/*
-	gallery
-*/
-.gallery {
-  padding: 0 20px;
-  text-align: center;
-  margin-left: 600px;
-}
-.gallery .grid {
-  display: grid;
-  grid-gap: 3px;
-  grid-auto-rows: 1fr;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-}
-.gallery .grid::before {
-  width: 0;
-  content: '';
-  grid-row: 1/1;
-  grid-column: 1/1;
-  padding-bottom: 100%;
-}
-.gallery .grid > *:first-child {
-  grid-row: 1/1;
-  grid-column: 1/1;
-}
-.gallery .gridItem {
-  border: 1px solid #ccc;
-}
-.gallery .gridItem .table {
-  display: table;
-  width: 100%;
-  height: 100%;
-}
-.gallery .gridItem .tcell {
-  display: table-cell;
-  vertical-align: middle;
-}
-.gallery .gridItem img {
-  width: 100%;
-}
-.gallery .gridItem:hover {
-  border-color: #f00;
-}
-.footer {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 60px;
-  width: 100%;
-  background-color: #eee;
 }
 .modal-donate .modal-dialog {
   width: 460px;

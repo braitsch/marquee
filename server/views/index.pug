@@ -2,20 +2,19 @@
 extends layout
 
 block content
-	nav.navbar.navbar-expand.navbar-light.bg-light
-		a.navbar-brand(href='#') marquee
-		ul.navbar-nav.ml-auto
-			li.nav-item
-				a(href='https://github.com/braitsch/marquee').btn.btn-outline-success Documentation
-			li.nav-item
+	nav.navbar.navbar-expand.navbar-light
+		.nav-item
+			a(href='https://github.com/braitsch/marquee').btn.btn-outline-success Documentation
+		.navbar-nav.ml-auto
+			.nav-item
 				button.btn.navbar-btn.btn-outline-success#donate-btn Buy Me A Beer
 
 	.header
-		| A browser based image cropping tool similar to the marquee/crop tool in Photoshop.
+		img(src='/img/logo.png' alt='Marquee').logo
+		| A simple, browser based image cropping tool similar to the marquee tool in Photoshop.
 	.content
-
 		#marquee
-			.title Click &amp; Drag to Define Crop Area
+			.title Click &amp; Drag!
 			.viewer
 				img
 				.cropper
@@ -46,19 +45,8 @@ block content
 			input(type='file' accept='.png, .jpg, .jpeg, .gif' style="display: none").file-dialog
 			button.btn.btn-success.btn-select Select Image
 			button.btn.btn-primary.btn-upload Generate Thumbnail
-
-		.gallery
-			p All files uploaded using this demo are <b>automatically deleted after three minutes</b>.
-			.grid
-				- for (var i = 10; i >= 0; i--) {
-					.gridItem
-						.table
-							.tcell
-								img(src='/img/slow-magic.jpg')
-				-}
-
-
 	.footer
+		| made by <a href='https://braitsch.io'>braitsch</a> 
 	include modal-download
 	include modal-donate
 
