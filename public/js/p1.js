@@ -148,6 +148,8 @@ $(function() {
 		if (!isWithinBounds(mouse)) return;
 		thumb.w = mouse.x - thumb.x;
 		thumb.h = mouse.y - thumb.y;
+		if (thumb.w < 0) thumb.w = 0;
+		if (thumb.h < 0) thumb.h = 0;
 		if (thumb.mode == 'fixed ratio') {
 			thumb.h = thumb.w * (thumb.ratio.h/thumb.ratio.w);
 			if (thumb.y + thumb.h > image.h){
