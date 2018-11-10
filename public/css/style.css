@@ -60,6 +60,7 @@ body {
   border: 1px dashed #fff;
 }
 .demo .progress {
+  height: 4px;
   border-radius: 0;
   margin-bottom: 6px;
 }

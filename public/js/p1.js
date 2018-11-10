@@ -4,7 +4,7 @@ $(function() {
 	let image = { url: '/img/slow-magic.jpg' };
 	let thumb = { mode:'normal', fixed:{w:250, h:250}, ratio:{w:16, h:9}};
 
-	const maxFileSize = 1;
+	const maxFileSize = 4;
 
 	const $viewer = $('.viewer');
 	const $image = $('.viewer img');
@@ -15,6 +15,7 @@ $(function() {
 	const $height = $('.thumb-settings .h');
 	const $select = $('.btn-select');
 	const $upload = $('.btn-upload');
+	const $progress = $('.progress-bar');
 	const $fileInput = $('.file-dialog')
 
 /*
@@ -68,7 +69,18 @@ $(function() {
 	$select.click(function(e){  $fileInput.click(); });
 	$upload.click(function(e){
 		var request = new XMLHttpRequest();
-			request.open('POST', '/upload');
+		request.open('POST', '/upload');
+		request.upload.onprogress = function(e){
+			var percentComplete = Math.round(e.loaded / e.total * 100);
+			$progress.css('width', percentComplete+'%')
+		}
+		request.onreadystatechange = function(e) {
+			if (request.readyState == 4 && request.status == 200) {
+			// append to newly created thumbnail to gallery //
+				let url = request.responseText;
+				$progress.fadeOut(1000);
+			}
+		};
 		var formData = new FormData();
 		if (thumb.w && thumb.h){
 			let mx = (image.nw/image.w);
@@ -76,6 +88,7 @@ $(function() {
 			let data = { x : (thumb.x-image.x) * mx, y : (thumb.y-image.y) * my, w : thumb.w * mx, h : thumb.h * my };
 			formData.append('data', JSON.stringify(data));
 		}
+		$progress.css('width', '0%'); $progress.show();
 		formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
 		request.send(formData);
 	});
