@@ -3,65 +3,26 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const formidable = require('formidable');
-//var pushpop = require('../../pushpop/npm-module/index.js');
-//var pushpop = require('pushpop');
 
-// pushpop.config({
-// // [required] set the global upload directory //
-// 	uploads:path.join(__dirname, '..', '/uploads'),
-// // [optional] overwrite file names with unique ids //
-// 	uniqueIds:true,
-// // [optional] enable logging //
-// 	enableLogs:true,
-// // [optional] save files to gcloud instead of the local filesystem //
-// //	service: { name:'gcloud', bucket:'pushpop'}
-// })
-
-// delete from demo anything that is older than three minutes //
-//var CronJob = require('cron').CronJob;
-//new CronJob('*/1 * * * *', pushpop.purge, 3, true, 'America/Los_Angeles');
+const images = 'media'; // <- destination folder
+const public = path.join(__dirname, '/../public');
+const uploads = path.join(public, images);
 
 module.exports = function(app) {
 
 	app.get('/', function (req, res)
 	{	
-		res.render('gallery');
-		//res.redirect('/project/gallery');
-	});
-
-	app.get('/project/:id', function(req, res)
-	{
-	// set the active project //
-		// pushpop.setProject(req.params['id'], function(project){
-		// 	res.render('gallery', { project : project });
-		// });
-	});	
-
-	app.get('/project/:id/print', function(req, res){
-		// pushpop.getProject(req.params['id'], function(project){
-		// 	res.send({ project : project });
-		// })
-	});
-
-	app.get('/print', function(req, res){
-		// pushpop.getAll(function(projects){
-		// 	res.send({ projects : projects });
-		// })
-	});
-
-	app.get('/reset', function(req, res){
-		// pushpop.reset(function(){
-		// 	res.redirect('/');
-		// });
+		res.render('index');
 	});
 
 	app.post('/delete', function(req, res)
 	{
-		// if (!pushpop.error){
-		// 	res.send('ok').status(200);
-		// }	else{
-		// 	res.send(pushpop.error).status(500);
-		// }
+		let form = new formidable.IncomingForm();
+		form.on('end', function() { res.send('ok'); });
+		form.parse(req, function(err, fields) {
+			let file = fields.file.substring(fields.file.lastIndexOf('/') + 1);
+			fs.unlinkSync(path.join(uploads, file), function(e){ console.log(e); });
+		});
 	});
 
 	app.post('/upload', function(req, res)
@@ -69,18 +30,17 @@ module.exports = function(app) {
 		let form = new formidable.IncomingForm();
 		let fileName = app.guid();
 		let cropData = undefined;
-		const gallery =  __dirname + '/../uploads';
 		form.on('file', function(type, file) {
-		// rename the incoming webm stream file so it is unique before we save it to disk //
-			fs.rename(file.path, gallery +'/'+ fileName + '.jpg', function( e ) { });
+			if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
+			fs.rename(file.path, uploads +'/'+ fileName + '.jpg', function( e ) { });
 		});
 		form.on('field', function(name, field) {
 			if (name == 'data') cropData = JSON.parse(field);
 		});
 		form.on('end', function() {
 			if (cropData){
-				let large = gallery +'/'+ fileName + '.jpg'
-				let small = gallery +'/'+ fileName + '_sm.jpg'
+				let large = uploads +'/'+ fileName + '.jpg'
+				let small = uploads +'/'+ fileName + '_sm.jpg'
 				sharp(large)
 				.extract({
 					left: Math.round(cropData.x),
@@ -89,23 +49,14 @@ module.exports = function(app) {
 					height: Math.round(cropData.h)
 				}).toBuffer().then(data => {
 					sharp(data).toFile(small).then(function(){
-						//	console.log('thumbnail generated')
+						fs.unlinkSync(large);
+						res.send('/'+images+'/'+fileName+'_sm.jpg');
 					});
 				});
 			}
-			res.send('ok');
 		});
 		form.parse(req, function(err, fields, file) { });
 	});
-
-	// app.post('/upload', pushpop.upload, function(req, res)
-	// {
-	// 	if (!pushpop.error){
-	// 		res.send('ok').status(200);
-	// 	}	else{
-	// 		res.send(pushpop.error).status(500);
-	// 	}
-	// });
 
 	app.get('*', function(req, res){
 		if (req.url != '/favicon.ico'){

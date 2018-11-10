@@ -1,0 +1,75 @@
+#marquee {
+  float: left;
+  width: 580px;
+  margin-left: 20px;
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+}
+#marquee .title {
+  color: #337ab7;
+  margin-bottom: 4px;
+}
+#marquee .viewer {
+  width: 100%;
+  height: 50vh;
+  max-height: 800px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 4px;
+  user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  background: #f8f8f8;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+#marquee .viewer img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+#marquee .viewer .cropper {
+  position: absolute;
+  border: 1px dashed #fff;
+}
+#marquee .progress {
+  height: 4px;
+  border-radius: 0;
+  margin-bottom: 6px;
+}
+#marquee .settings {
+  text-align: left;
+  margin-bottom: 6px;
+}
+#marquee .settings label,
+#marquee .settings select,
+#marquee .settings option,
+#marquee .settings input {
+  font-size: 0.8em;
+}
+#marquee .settings label,
+#marquee .settings select,
+#marquee .settings input {
+  margin-right: 8px;
+}
+#marquee .settings input {
+  width: 77px;
+}
+#marquee .settings input.h {
+  margin-right: 0;
+}
+#marquee .settings .style {
+  width: 100px;
+}
+#marquee .settings .color {
+  width: 90px;
+}
+#marquee .btn {
+  width: 49.5%;
+  float: left;
+}
+#marquee .btn-upload {
+  margin-left: 1%;
+}

@@ -21,7 +21,7 @@ require('./server/routes')(app);
 require('./server/stripe')(app);
 
 const exec = require('child_process').exec;
-const cmpl = 'stylus -w '+__dirname+'/public/css/style.styl -o '+__dirname+'/public/css/style.css';
+const cmpl = 'stylus -w '+__dirname+'/public/css';
 exec( cmpl, (e, stdout, stderr) => {
 	e ? console.log(e) : console.log('watching style sheet');
 });

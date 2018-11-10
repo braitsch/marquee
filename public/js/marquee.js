@@ -1,5 +1,5 @@
 
-$(function() {
+function Marquee(){
 
 	let image = { url: '/img/slow-magic.jpg' };
 	let thumb = { mode:'normal', fixed:{w:250, h:250}, ratio:{w:16, h:9}};
@@ -8,15 +8,21 @@ $(function() {
 
 	const $viewer = $('.viewer');
 	const $image = $('.viewer img');
-	const $marquee = $('.marquee');;
-	const $style = $('.thumb-settings .style');
-	const $color = $('.thumb-settings .color');
-	const $width = $('.thumb-settings .w');
-	const $height = $('.thumb-settings .h');
+	const $cropper = $('.cropper');
+	const $style = $('.settings .style');
+	const $color = $('.settings .color');
+	const $width = $('.settings .w');
+	const $height = $('.settings .h');
 	const $select = $('.btn-select');
 	const $upload = $('.btn-upload');
 	const $progress = $('.progress-bar');
-	const $fileInput = $('.file-dialog')
+	const $fileInput = $('.file-dialog');
+
+	let onCompleteCallback;
+	this.onComplete = function(callback)
+	{
+		onCompleteCallback = callback;
+	}
 
 /*
 	dropdowns & inputs
@@ -37,7 +43,7 @@ $(function() {
 		$height.prop('disabled', thumb.mode == 'normal');
 	});
 	$color.change(function(){
-		$marquee.css('border-color', this.value.toLowerCase());
+		$cropper.css('border-color', this.value.toLowerCase());
 	});
 	$width.change(function(){
 		let w = $(this).val();
@@ -76,9 +82,8 @@ $(function() {
 		}
 		request.onreadystatechange = function(e) {
 			if (request.readyState == 4 && request.status == 200) {
-			// append to newly created thumbnail to gallery //
-				let url = request.responseText;
 				$progress.fadeOut(1000);
+				if (onCompleteCallback) onCompleteCallback(request.responseText);
 			}
 		};
 		var formData = new FormData();
@@ -140,7 +145,7 @@ $(function() {
 		image.nw = img.naturalWidth;
 		image.nh = img.naturalHeight;
 		thumb.x = 0; thumb.y = 0; thumb.w = 0; thumb.h = 0;
-		$marquee.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
+		$cropper.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
 	}
 
 	getImageAsBlob(image.url);
@@ -170,7 +175,7 @@ $(function() {
 				thumb.w = thumb.h * (thumb.ratio.w/thumb.ratio.h);
 			}
 		}
-		$marquee.css({ width:thumb.w, height:thumb.h});
+		$cropper.css({ width:thumb.w, height:thumb.h});
 	}
 	var isWithinBounds = function(p)
 	{
@@ -186,6 +191,7 @@ $(function() {
 		if (!isWithinBounds(mouse)) return;
 		thumb.x = mouse.x;
 		thumb.y = mouse.y;
+		thumb.w = 0; thumb.h = 0;
 		if (thumb.mode == 'fixed size'){
 			let dx = (image.nw - thumb.fixed.w) * (image.w/image.nw);
 			let dy = (image.nh - thumb.fixed.h) * (image.h/image.nh);
@@ -193,28 +199,28 @@ $(function() {
 			if (thumb.y > dy + image.y) thumb.y = dy + image.y;
 			thumb.w = thumb.fixed.w * (image.w/image.nw);
 			thumb.h = thumb.fixed.h * (image.h/image.nh);
-			$marquee.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
+			$cropper.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
 		}	else{
 		// allow resizing //
 			$viewer.css('cursor', 'crosshair');
 			$image.bind("mousemove", resize);
-			$marquee.bind("mousemove", resize);
-			$marquee.css({ top:thumb.y, left:thumb.x, width:0, height:0 });
+			$cropper.bind("mousemove", resize);
+			$cropper.css({ top:thumb.y, left:thumb.x, width:0, height:0 });
 		}
 	}
 	var onMouseUp = function()
 	{
 		$viewer.css('cursor', 'default');
 		$image.unbind("mousemove", resize);
-		$marquee.unbind("mousemove", resize);
+		$cropper.unbind("mousemove", resize);
 	}
-	$marquee.bind("mousedown", onMouseDown);
+	$cropper.bind("mousedown", onMouseDown);
 	$image.bind("mousedown", onMouseDown);
 	$image.on('dragstart', function(e) { e.preventDefault(); });
 	$(window).bind("mouseup", onMouseUp);
 	document.addEventListener("keydown", function(e){
 // allow arrow keys to fine tune placement of the thumbnail //
-		if ($marquee.is(":visible")){
+		if ($cropper.is(":visible")){
 			if (e.keyCode == 37){
 				thumb.x--;
 			} else if (e.keyCode == 38){
@@ -228,9 +234,9 @@ $(function() {
 			if (thumb.y < image.y) thumb.y = image.y;
 			if (thumb.x+thumb.w>image.x+image.w) thumb.x = (image.x+image.w)-thumb.w;
 			if (thumb.y+thumb.h>image.y+image.h) thumb.y = (image.y+image.h)-thumb.h;
-			$marquee.css({ left:thumb.x, top:thumb.y });
+			$cropper.css({ left:thumb.x, top:thumb.y });
 		}
 	}, false);
 	$( window ).resize(computeImageDimensions);
 
-});
+};
