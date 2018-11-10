@@ -69,16 +69,19 @@ $(function() {
 	$upload.click(function(e){
 		let mx = (image.nw/image.w);
 		let my = (image.nh/image.h);
-		thumb.crop.x = (thumb.crop.x-image.x) * mx;
-		thumb.crop.y = (thumb.crop.y-image.y) * my;
+		let data = {
+			x : (thumb.crop.x-image.x) * mx,
+			y : (thumb.crop.y-image.y) * my,
+			w : thumb.crop.w, h : thumb.crop.h
+		}
 		if (thumb.mode != 'fixed size'){
-			thumb.crop.w *= mx;
-			thumb.crop.h *= my;
+			data.w *= mx;
+			data.h *= my;
 		}
 		var request = new XMLHttpRequest();
 			request.open('POST', '/upload');
 		var formData = new FormData();
-			formData.append('data', JSON.stringify(thumb.crop));
+			formData.append('data', JSON.stringify(data));
 			formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
 		request.send(formData);
 	})
@@ -151,7 +154,13 @@ $(function() {
 		if (!isWithinBounds(mouse)) return;
 		thumb.crop.w = mouse.x - thumb.crop.x;
 		thumb.crop.h = mouse.y - thumb.crop.y;
-		if (thumb.mode == 'fixed ratio') thumb.crop.h = thumb.crop.w * (thumb.rh/thumb.rw);
+		if (thumb.mode == 'fixed ratio') {
+			thumb.crop.h = thumb.crop.w * (thumb.rh/thumb.rw);
+			if (thumb.crop.y + thumb.crop.h > image.h){
+				thumb.crop.h = image.h - thumb.crop.y;
+				thumb.crop.w = thumb.crop.h * (thumb.rw/thumb.rh);
+			}
+		}
 		$marquee.css({ width:thumb.crop.w, height:thumb.crop.h});
 	}
 	var isWithinBounds = function(p)
@@ -178,36 +187,40 @@ $(function() {
 			$marquee.css({ top:thumb.crop.y, left:thumb.crop.x, width:w, height:h });
 		}	else{
 		// allow resizing //
+			$viewer.css('cursor', 'crosshair');
 			$image.bind("mousemove", resize);
 			$marquee.bind("mousemove", resize);
-			$image.css('cursor', 'crosshair');
 			$marquee.css({ top:thumb.crop.y, left:thumb.crop.x, width:0, height:0 });
 		}
 		$marquee.show();
 	}
 	var onMouseUp = function()
 	{
-		$image.css('cursor', 'default');
+		$viewer.css('cursor', 'default');
 		$image.unbind("mousemove", resize);
 		$marquee.unbind("mousemove", resize);
 	}
 	$(window).bind("mouseup", onMouseUp);
 	$image.bind("mousedown", onMouseDown);
 	$marquee.bind("mousedown", onMouseDown);
-// 	document.addEventListener("keydown", function(e){
-// // allow arrow keys to fine tune placement of the thumbnail //
-// 		if ($marquee.is(":visible")){
-// 			if (e.keyCode == 37){
-// 				thumb.crop.x--;
-// 			} else if (e.keyCode == 38){
-// 				thumb.crop.y--;
-// 			} else if (e.keyCode == 39){
-// 				thumb.crop.x++;
-// 			} else if (e.keyCode == 40){
-// 				thumb.crop.y++;
-// 			}
-// 			$marquee.css({ left:thumb.crop.x, top:thumb.crop.y });
-// 		}
-// 	}, false);
+	document.addEventListener("keydown", function(e){
+// allow arrow keys to fine tune placement of the thumbnail //
+		if ($marquee.is(":visible")){
+			if (e.keyCode == 37){
+				thumb.crop.x--;
+			} else if (e.keyCode == 38){
+				thumb.crop.y--;
+			} else if (e.keyCode == 39){
+				thumb.crop.x++;
+			} else if (e.keyCode == 40){
+				thumb.crop.y++;
+			}
+			if (thumb.crop.x < image.x) thumb.crop.x = image.x;
+			if (thumb.crop.y < image.y) thumb.crop.y = image.y;
+			if (thumb.crop.x+thumb.crop.w>image.x+image.w) thumb.crop.x = (image.x+image.w)-thumb.crop.w;
+			if (thumb.crop.y+thumb.crop.h>image.y+image.h) thumb.crop.y = (image.y+image.h)-thumb.crop.h;
+			$marquee.css({ left:thumb.crop.x, top:thumb.crop.y });
+		}
+	}, false);
 
 });
