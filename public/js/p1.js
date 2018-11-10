@@ -2,7 +2,7 @@
 $(function() {
 
 	let image = { url: '/img/slow-magic.jpg' };
-	let thumb = { mode:'normal', crop:{w:500, h:500}, rw:16, rh:9 };
+	let thumb = { mode:'normal', fixed:{w:250, h:250}, ratio:{w:16, h:9}};
 
 	const maxFileSize = 1;
 
@@ -26,11 +26,11 @@ $(function() {
 		if (thumb.mode == 'normal'){
 			$width.val(''); $height.val('');
 		}	else if (thumb.mode == 'fixed size'){
-			$width.val(thumb.crop.w);
-			$height.val(thumb.crop.h);
+			$width.val(thumb.fixed.w);
+			$height.val(thumb.fixed.h);
 		}	else if (thumb.mode == 'fixed ratio'){
-			$width.val(thumb.rw);
-			$height.val(thumb.rh);
+			$width.val(thumb.ratio.w);
+			$height.val(thumb.ratio.h);
 		}
 		$width.prop('disabled', thumb.mode == 'normal');
 		$height.prop('disabled', thumb.mode == 'normal');
@@ -43,9 +43,9 @@ $(function() {
 		if (w < 1) w = 1;
 		if (w > image.nw) w = image.nw;
 		if (thumb.mode == 'fixed size'){
-			thumb.crop.w = w;
+			thumb.fixed.w = w;
 		}	else if (thumb.mode == 'fixed ratio'){
-			thumb.rw = w;
+			thumb.ratio.w = w;
 		}
 		$(this).val(w);
 	});
@@ -54,9 +54,9 @@ $(function() {
 		if (h < 1) h = 1;
 		if (h > image.nh) h = image.nh;
 		if (thumb.mode == 'fixed size'){
-			thumb.crop.h = h;
+			thumb.fixed.h = h;
 		}	else if (thumb.mode == 'fixed ratio'){
-			thumb.rh = h;
+			thumb.ratio.h = h;
 		}
 		$(this).val(h);
 	});
@@ -67,25 +67,18 @@ $(function() {
 
 	$select.click(function(e){  $fileInput.click(); });
 	$upload.click(function(e){
-		let mx = (image.nw/image.w);
-		let my = (image.nh/image.h);
-		let data = {
-			x : (thumb.crop.x-image.x) * mx,
-			y : (thumb.crop.y-image.y) * my,
-			w : thumb.crop.w, h : thumb.crop.h
-		}
-		if (thumb.mode != 'fixed size'){
-			data.w *= mx;
-			data.h *= my;
-		}
 		var request = new XMLHttpRequest();
 			request.open('POST', '/upload');
 		var formData = new FormData();
+		if (thumb.w && thumb.h){
+			let mx = (image.nw/image.w);
+			let my = (image.nh/image.h);
+			let data = { x : (thumb.x-image.x) * mx, y : (thumb.y-image.y) * my, w : thumb.w * mx, h : thumb.h * my };
 			formData.append('data', JSON.stringify(data));
-			formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
+		}
+		formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
 		request.send(formData);
-	})
-
+	});
 	$fileInput.change(function(e) {
 		if (this.files && this.files[0]) {
 			if (maxFileSize && this.files[0].size/1000/1000 > maxFileSize){
@@ -98,50 +91,51 @@ $(function() {
 		}
 	});
 
-	const getImageAsBlob = async function(url)
+	var getImageAsBlob = async function(url)
 	{
 		image.ext = url.split('.').pop();
 		convertBlobToImage(await fetch(url).then(r => r.blob()));
 	}
-
-	const convertBlobToImage = function(blob)
+	var convertBlobToImage = function(blob)
 	{
 		image.blob = blob;
 		var reader = new FileReader();
 		reader.onload = function (e) {
 			$image.attr('src', e.target.result);
-			setTimeout(function(){
-				let img = $image[0];
-				let dw = img.width/img.naturalWidth;
-				let dh = img.height/img.naturalHeight;
-				if (dw > dh){
-					let w = img.naturalWidth * dh;
-					image.x	= (img.width-w)/2;
-					image.y	= 0;
-					image.w	= w;
-					image.h	= img.height;
-				}	else{
-					let h = img.naturalHeight * dw;
-					image.x	= 0;
-					image.y	= (img.height-h)/2;
-					image.w	= img.width;
-					image.h	= h;
-				}
-				image.nw = img.naturalWidth;
-				image.nh = img.naturalHeight;
-			}, 100)
+			setTimeout(computeImageDimensions, 100);
 		}
 		reader.readAsDataURL(blob);
 	}
+	var computeImageDimensions = function()
+	{
+		let img = $image[0];
+		let dw = img.width/img.naturalWidth;
+		let dh = img.height/img.naturalHeight;
+		if (dw > dh){
+			let w = img.naturalWidth * dh;
+			image.x	= (img.width-w)/2;
+			image.y	= 0;
+			image.w	= w;
+			image.h	= img.height;
+		}	else{
+			let h = img.naturalHeight * dw;
+			image.x	= 0;
+			image.y	= (img.height-h)/2;
+			image.w	= img.width;
+			image.h	= h;
+		}
+		image.nw = img.naturalWidth;
+		image.nh = img.naturalHeight;
+		thumb.x = 0; thumb.y = 0; thumb.w = 0; thumb.h = 0;
+		$marquee.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
+	}
 
-	getImageAsBlob(image.url)
+	getImageAsBlob(image.url);
 
-	/*
-		marquee tool
-	*/
+/*
+	marquee tool
+*/
 
-	$marquee.hide();
-	$image.on('dragstart', function(e) { e.preventDefault(); });
 	var getMousePosition = function(e)
 	{
 		var mouse = { x:e.clientX, y:e.clientY };
@@ -152,16 +146,16 @@ $(function() {
 	{
 		var mouse = getMousePosition(e);
 		if (!isWithinBounds(mouse)) return;
-		thumb.crop.w = mouse.x - thumb.crop.x;
-		thumb.crop.h = mouse.y - thumb.crop.y;
+		thumb.w = mouse.x - thumb.x;
+		thumb.h = mouse.y - thumb.y;
 		if (thumb.mode == 'fixed ratio') {
-			thumb.crop.h = thumb.crop.w * (thumb.rh/thumb.rw);
-			if (thumb.crop.y + thumb.crop.h > image.h){
-				thumb.crop.h = image.h - thumb.crop.y;
-				thumb.crop.w = thumb.crop.h * (thumb.rw/thumb.rh);
+			thumb.h = thumb.w * (thumb.ratio.h/thumb.ratio.w);
+			if (thumb.y + thumb.h > image.h){
+				thumb.h = image.h - thumb.y;
+				thumb.w = thumb.h * (thumb.ratio.w/thumb.ratio.h);
 			}
 		}
-		$marquee.css({ width:thumb.crop.w, height:thumb.crop.h});
+		$marquee.css({ width:thumb.w, height:thumb.h});
 	}
 	var isWithinBounds = function(p)
 	{
@@ -175,24 +169,23 @@ $(function() {
 	{
 		var mouse = getMousePosition(e);
 		if (!isWithinBounds(mouse)) return;
-		thumb.crop.x = mouse.x;
-		thumb.crop.y = mouse.y;
+		thumb.x = mouse.x;
+		thumb.y = mouse.y;
 		if (thumb.mode == 'fixed size'){
-			let dx = (image.nw - thumb.crop.w) * (image.w/image.nw);
-			let dy = (image.nh - thumb.crop.h) * (image.h/image.nh);
-			if (thumb.crop.x > dx + image.x) thumb.crop.x = dx + image.x;
-			if (thumb.crop.y > dy + image.y) thumb.crop.y = dy + image.y;
-			let w = thumb.crop.w * (image.w/image.nw);
-			let h = thumb.crop.h * (image.h/image.nh);
-			$marquee.css({ top:thumb.crop.y, left:thumb.crop.x, width:w, height:h });
+			let dx = (image.nw - thumb.fixed.w) * (image.w/image.nw);
+			let dy = (image.nh - thumb.fixed.h) * (image.h/image.nh);
+			if (thumb.x > dx + image.x) thumb.x = dx + image.x;
+			if (thumb.y > dy + image.y) thumb.y = dy + image.y;
+			thumb.w = thumb.fixed.w * (image.w/image.nw);
+			thumb.h = thumb.fixed.h * (image.h/image.nh);
+			$marquee.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
 		}	else{
 		// allow resizing //
 			$viewer.css('cursor', 'crosshair');
 			$image.bind("mousemove", resize);
 			$marquee.bind("mousemove", resize);
-			$marquee.css({ top:thumb.crop.y, left:thumb.crop.x, width:0, height:0 });
+			$marquee.css({ top:thumb.y, left:thumb.x, width:0, height:0 });
 		}
-		$marquee.show();
 	}
 	var onMouseUp = function()
 	{
@@ -200,27 +193,29 @@ $(function() {
 		$image.unbind("mousemove", resize);
 		$marquee.unbind("mousemove", resize);
 	}
-	$(window).bind("mouseup", onMouseUp);
-	$image.bind("mousedown", onMouseDown);
 	$marquee.bind("mousedown", onMouseDown);
+	$image.bind("mousedown", onMouseDown);
+	$image.on('dragstart', function(e) { e.preventDefault(); });
+	$(window).bind("mouseup", onMouseUp);
 	document.addEventListener("keydown", function(e){
 // allow arrow keys to fine tune placement of the thumbnail //
 		if ($marquee.is(":visible")){
 			if (e.keyCode == 37){
-				thumb.crop.x--;
+				thumb.x--;
 			} else if (e.keyCode == 38){
-				thumb.crop.y--;
+				thumb.y--;
 			} else if (e.keyCode == 39){
-				thumb.crop.x++;
+				thumb.x++;
 			} else if (e.keyCode == 40){
-				thumb.crop.y++;
+				thumb.y++;
 			}
-			if (thumb.crop.x < image.x) thumb.crop.x = image.x;
-			if (thumb.crop.y < image.y) thumb.crop.y = image.y;
-			if (thumb.crop.x+thumb.crop.w>image.x+image.w) thumb.crop.x = (image.x+image.w)-thumb.crop.w;
-			if (thumb.crop.y+thumb.crop.h>image.y+image.h) thumb.crop.y = (image.y+image.h)-thumb.crop.h;
-			$marquee.css({ left:thumb.crop.x, top:thumb.crop.y });
+			if (thumb.x < image.x) thumb.x = image.x;
+			if (thumb.y < image.y) thumb.y = image.y;
+			if (thumb.x+thumb.w>image.x+image.w) thumb.x = (image.x+image.w)-thumb.w;
+			if (thumb.y+thumb.h>image.y+image.h) thumb.y = (image.y+image.h)-thumb.h;
+			$marquee.css({ left:thumb.x, top:thumb.y });
 		}
 	}, false);
+	$( window ).resize(computeImageDimensions);
 
 });

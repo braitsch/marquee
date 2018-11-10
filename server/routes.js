@@ -89,7 +89,7 @@ module.exports = function(app) {
 					height: Math.round(cropData.h)
 				}).toBuffer().then(data => {
 					sharp(data).toFile(small).then(function(){
-						console.log('thumbnail generated')
+						//	console.log('thumbnail generated')
 					});
 				});
 			}
