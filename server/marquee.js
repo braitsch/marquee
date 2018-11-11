@@ -24,12 +24,18 @@ const path = require('path');
 const sharp = require('sharp');
 const formidable = require('formidable');
 
-const images = 'media'; // <- destination folder
-const public = path.join(__dirname, '/../public');
-const uploads = path.join(public, images);
-
-if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
+let keepFiles = false;
+let uploads = path.join(path.dirname(require.main.filename), '/server/uploads');
 const guid = function(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {var r = Math.random()*16|0,v=c=='x'?r:r&0x3|0x8;return v.toString(16);});}
+
+exports.config = function(config){
+	if (config.uploads){
+		uploads = path.join(path.dirname(require.main.filename), config.uploads)
+	}
+	if (config.keepFiles){
+		keepFiles = config.keepFiles;
+	}
+}
 
 exports.upload = function(req, cback)
 {
@@ -40,6 +46,7 @@ exports.upload = function(req, cback)
 	form.on('file', function(type, f) { file = f; });
 	form.on('field', function(name, field) { if (name == 'crop') crop = JSON.parse(field); });
 	form.on('end', function() {
+		if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
 		mv(file.path, uploads +'/'+ fileName + '.jpg', function( e ) { 
 			if (e){
 				console.log(e);
@@ -54,9 +61,12 @@ exports.upload = function(req, cback)
 						width: Math.round(crop.w),
 						height: Math.round(crop.h)
 					}).toBuffer().then(data => {
-						sharp(data).toFile(small).then(function(){
+						sharp(data).toFile(small).then(function(e, info){
 							if (fs.existsSync(large)) fs.unlinkSync(large);
-							cback('/'+images+'/'+fileName+'_sm.jpg');
+							cback({ 
+								large : {path:large, name: fileName + '.jpg'}, 
+								small : {path:small, name: fileName + '_sm.jpg', base64:Buffer.from(data).toString('base64')}
+							});
 						}).catch(function(e){ console.log(e); });
 					}).catch(function(e){ console.log(e); });
 				}
@@ -71,7 +81,7 @@ exports.delete = function(req, cback)
 	let form = new formidable.IncomingForm();
 	form.on('end', cback);
 	form.parse(req, function(err, fields) {
-		let file = path.join(uploads, fields.file.substring(fields.file.lastIndexOf('/') + 1));
+		let file = path.join(uploads, fields.file);
 		if (fs.existsSync(file)) fs.unlinkSync(file);
 	});
 }
@@ -93,5 +103,6 @@ exports.reset = function(cback)
 		cback();
 	});
 }
+
 
 

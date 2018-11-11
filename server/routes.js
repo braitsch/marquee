@@ -1,5 +1,9 @@
 
-const marquee = require('./marquee');
+const marquee = require('./marquee')
+marquee.config({
+	uploads : '/public/media', // <- relative to application root 
+	keepFiles : false
+});
 
 module.exports = function(app) {
 
@@ -15,8 +19,10 @@ module.exports = function(app) {
 	});
 
 	app.post('/upload', function(req, res, next){
-		marquee.upload(req, function(file){
-			res.send(file);
+		marquee.upload(req, function(response){
+			res.send(JSON.stringify({
+				name:response.small.name, base64:response.small.base64
+			}));
 		});
 	});
 

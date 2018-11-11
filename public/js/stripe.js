@@ -27,13 +27,13 @@ $(function() {
 	});
 	$('.modal-donate .btn-donate').on('click', function(e) {
 		amount = $('input[name=donationRadios]:checked').val();
-//	open checkout with options //
+	//	open checkout with options //
 		handler.open({
 			name: 'braitsch.io',
 			amount: amount,
 			description: details
 		});
 	});
-	// close checkout on page navigation //
+	//	close checkout on page navigation //
 	$(window).on('popstate', function() { handler.close(); });
 });

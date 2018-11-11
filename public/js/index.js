@@ -1,8 +1,6 @@
 
 $(function() {
 
-	let imageURL = undefined;
-
 	$donate = $('#donate');
 	$modal_dn = $('.modal-donate');
 
@@ -11,11 +9,12 @@ $(function() {
 	$modal_dl_btn = $('.modal-download .btn');
 
 	let mq = new Marquee();
-	mq.onComplete(function(url)
+	mq.onComplete(function(name, base64)
 	{
-		imageURL = url;
-		$modal_dl_img.attr('src', imageURL);
-		$modal_dl_btn.attr('href', imageURL);
+		$modal_dl_img.attr('src', base64);
+		$modal_dl_img.attr('name', name);
+		$modal_dl_btn.attr('href', base64);
+		$modal_dl_btn.attr('download', name);
 		$modal_dl.modal('show');
 	});
 
@@ -24,7 +23,7 @@ $(function() {
 		let request = new XMLHttpRequest();
 			request.open('POST', '/delete');
 		let formData = new FormData();
-			formData.append('file', imageURL);
+			formData.append('file', $modal_dl_img.attr('name'));
 		request.send(formData);
 	});
 

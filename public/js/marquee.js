@@ -1,10 +1,37 @@
 
+/*
+    Copyright (C) 2018 Stephen Braitsch [http://braitsch.io]
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+*/
+
 function Marquee(){
 
-	let image = { url: '/img/slow-magic.jpg' };
-	let thumb = { mode:'normal', fixed:{w:250, h:250}, ratio:{w:16, h:9}};
+	/*
+		default settings
+	*/
 
-	const maxFileSize = 4;
+	let image = { url: '/img/slow-magic.jpg' };
+	let thumb = { mode:'normal', fixed:{ w:250, h:250 }, ratio:{ w:16, h:9 }};
+
+	const maxFileSize = 4; // <- max file size for uploads in MBs
+
+	/*
+		don't change anything below here
+	*/
 
 	const $viewer = $('.viewer');
 	const $image = $('.viewer img');
@@ -83,7 +110,10 @@ function Marquee(){
 		request.onreadystatechange = function(e) {
 			if (request.readyState == 4 && request.status == 200) {
 				$progress.fadeOut(1000);
-				if (onCompleteCallback) onCompleteCallback(request.responseText);
+				let data = JSON.parse(request.responseText);
+				let name = data.name;
+				let b64string = 'data:'+image.mime+';base64,'+data.base64;
+				if (onCompleteCallback) onCompleteCallback(name, b64string);
 			}
 		};
 		var formData = new FormData();
@@ -94,7 +124,7 @@ function Marquee(){
 			formData.append('crop', JSON.stringify(crop));
 		}
 		$progress.css('width', '0%'); $progress.show();
-		formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
+		formData.append('file', new File([image.blob], 'photo.'+image.ext, { type:image.mime }));
 		request.send(formData);
 	});
 	$fileInput.change(function(e) {
@@ -104,6 +134,7 @@ function Marquee(){
 			}	else{
 				let url = $fileInput.val().replace(/C:\\fakepath\\/i, '');
 				image.ext = url.split('.').pop();
+				image.mime = getMimeType(image.ext);
 				convertBlobToImage(this.files[0]);
 			}
 		}
@@ -112,6 +143,7 @@ function Marquee(){
 	var getImageAsBlob = async function(url)
 	{
 		image.ext = url.split('.').pop();
+		image.mime = getMimeType(image.ext);
 		convertBlobToImage(await fetch(url).then(r => r.blob()));
 	}
 	var convertBlobToImage = function(blob)
@@ -147,6 +179,10 @@ function Marquee(){
 		thumb.x = 0; thumb.y = 0; thumb.w = 0; thumb.h = 0;
 		$cropper.css({ top:thumb.y, left:thumb.x, width:thumb.w, height:thumb.h });
 		$cropper.hide();
+	}
+	var getMimeType = function(ext)
+	{
+		'image/'+(ext=='jpg' ? 'jpeg' : ext);
 	}
 
 	getImageAsBlob(image.url);
