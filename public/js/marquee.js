@@ -90,8 +90,8 @@ function Marquee(){
 		if (thumb.w && thumb.h){
 			let mx = (image.nw/image.w);
 			let my = (image.nh/image.h);
-			let data = { x : (thumb.x-image.x) * mx, y : (thumb.y-image.y) * my, w : thumb.w * mx, h : thumb.h * my };
-			formData.append('data', JSON.stringify(data));
+			let crop = { x : (thumb.x-image.x) * mx, y : (thumb.y-image.y) * my, w : thumb.w * mx, h : thumb.h * my };
+			formData.append('crop', JSON.stringify(crop));
 		}
 		$progress.css('width', '0%'); $progress.show();
 		formData.append('file', new File([image.blob], 'photo.'+image.ext, { type: 'image/'+(image.ext=='jpg' ? 'jpeg' : image.ext)}));
