@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+const mv = require('mv');
 const path = require('path');
 const sharp = require('sharp');
 const formidable = require('formidable');
@@ -28,34 +29,37 @@ module.exports = function(app) {
 	app.post('/upload', function(req, res)
 	{
 		let form = new formidable.IncomingForm();
+		let file = undefined;
+		let crop = undefined;
 		let fileName = app.guid();
-		let cropData = undefined;
-		form.on('file', function(type, file) {
-			if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
-			fs.rename(file.path, uploads +'/'+ fileName + '.jpg', function( e ) { });
-		});
-		form.on('field', function(name, field) {
-			if (name == 'data') cropData = JSON.parse(field);
-		});
+		form.on('file', function(type, f) { file = f; });
+		form.on('field', function(name, field) { if (name == 'crop') crop = JSON.parse(field); });
 		form.on('end', function() {
-			if (cropData){
-				let large = uploads +'/'+ fileName + '.jpg'
-				let small = uploads +'/'+ fileName + '_sm.jpg'
-				sharp(large)
-				.extract({
-					left: Math.round(cropData.x),
-					top: Math.round(cropData.y),
-					width: Math.round(cropData.w),
-					height: Math.round(cropData.h)
-				}).toBuffer().then(data => {
-					sharp(data).toFile(small).then(function(){
-						fs.unlinkSync(large);
-						res.send('/'+images+'/'+fileName+'_sm.jpg');
-					});
-				});
-			}
+			if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
+			mv(file.path, uploads +'/'+ fileName + '.jpg', function( e ) { 
+				if (e){
+					console.log(e);
+				}	else{
+					if (crop){
+						let large = uploads +'/'+ fileName + '.jpg'
+						let small = uploads +'/'+ fileName + '_sm.jpg'
+						sharp(large)
+						.extract({
+							left: Math.round(crop.x),
+							top: Math.round(crop.y),
+							width: Math.round(crop.w),
+							height: Math.round(crop.h)
+						}).toBuffer().then(data => {
+							sharp(data).toFile(small).then(function(){
+								fs.unlinkSync(large);
+								res.send('/'+images+'/'+fileName+'_sm.jpg');
+							}).catch(function(e){ console.log(e); });
+						}).catch(function(e){ console.log(e); });
+					}
+				}
+			});
 		});
-		form.parse(req, function(err, fields, file) { });
+		form.parse(req, function(err, fields, file) {});
 	});
 
 	app.get('*', function(req, res){
