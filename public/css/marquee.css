@@ -1,7 +1,10 @@
 #marquee {
   width: 580px;
-  padding: 10px 20px;
+  padding: 20px;
+  background: #fff;
   border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0px 0px 8px 3px rgba(0,0,0,0.08);
 }
 #marquee .title {
   color: #337ab7;
@@ -9,7 +12,7 @@
 }
 #marquee .viewer {
   width: 100%;
-  height: 50vh;
+  height: 46vh;
   max-height: 800px;
   overflow: hidden;
   position: relative;

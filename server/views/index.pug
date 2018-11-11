@@ -4,17 +4,16 @@ extends layout
 block content
 	nav.navbar.navbar-expand.navbar-light
 		.nav-item
-			a(href='https://github.com/braitsch/marquee').btn.btn-outline-success Documentation
+			a(href='https://github.com/braitsch/marquee').btn.btn-outline-dark Documentation
 		.navbar-nav.ml-auto
 			.nav-item
-				button.btn.navbar-btn.btn-outline-success#donate-btn Buy Me A Beer
+				button.btn.navbar-btn.btn-outline-dark#donate Buy Me A Beer
 
 	.header
 		img(src='/img/logo.png' alt='Marquee').logo
 		| A simple, browser based image cropping tool similar to the marquee tool in Photoshop.
 	.content
 		#marquee
-			.title Click &amp; Drag!
 			.viewer
 				img
 				.cropper
@@ -46,7 +45,7 @@ block content
 			button.btn.btn-success.btn-select Select Image
 			button.btn.btn-primary.btn-upload Generate Thumbnail
 	.footer
-		| made by <a href='https://braitsch.io'>braitsch</a> 
+		a(href='https://braitsch.io') made by braitsch
 	include modal-download
 	include modal-donate
 

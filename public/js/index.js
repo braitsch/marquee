@@ -3,6 +3,9 @@ $(function() {
 
 	let imageURL = undefined;
 
+	$donate = $('#donate');
+	$modal_dn = $('.modal-donate');
+
 	$modal_dl = $('.modal-download');
 	$modal_dl_img = $('.modal-download img');
 	$modal_dl_btn = $('.modal-download .btn');
@@ -18,12 +21,15 @@ $(function() {
 
 	$modal_dl_btn.click(function(){ $modal_dl.modal('hide'); });
 	$modal_dl.on('hidden.bs.modal', function (e) {
-		console.log('hidden')
 		let request = new XMLHttpRequest();
 			request.open('POST', '/delete');
 		let formData = new FormData();
 			formData.append('file', imageURL);
 		request.send(formData);
+	});
+
+	$donate.click(function(){
+		$modal_dn.modal('show');
 	});
 
 });

@@ -1,5 +1,5 @@
 
-$footerheight = 60px;
+$footerheight = 40px;
 
 html {
 	position: relative;
@@ -7,6 +7,7 @@ html {
 }
 body {
 	margin: 0 0 $footerheight;
+	background url('/img/ice_age.png') repeat
 }
 
 .navbar{
@@ -21,10 +22,11 @@ body {
 
 .header{
 	.logo{
-		width 200px
+		width 260px
 		display block
-		margin auto
+		margin -40px auto 4px auto
 	}
+	color #333
 	text-align center
 	margin-bottom 20px
 }
@@ -42,27 +44,25 @@ body {
 	bottom: 0;
 	height: $footerheight;
 	width: 100%;
-	padding-top: 10px
+	padding-top: 8px
 	text-align center
-	background-color:#eee;
+	border-top 1px solid #eee;
+	background-color:#fff;
+	a{
+		color #333
+		text-decoration: none;
+	}
+	a:hover{
+		color #a60707
+	}
 }
 
-.modal-download{
-	.modal-content{
-		width 30vw
-		margin auto
-		min-width 220px
+.modal-donate{
+	.modal-body{
+		font-size .95em;
 	}
-	.card{
-		height 20vw
-	}
-	img{
-		width 100%
-		height 100%
-		object-fit contain
-	}
-	.btn{
-		width 100%
+	.radios{
+		margin 20px 0 10px 44px
 	}
 }
 

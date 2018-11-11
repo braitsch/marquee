@@ -1,31 +1,29 @@
 
-.modal.fade.modal-donate
+.modal.modal-donate.fade
 	.modal-dialog
 		.modal-content
 			.modal-header
+				h5.modal-title Support This Project
 				button.close(type='button', data-dismiss='modal', aria-label='Close')
 					span(aria-hidden='true') ×
-				h4.modal-title Donate
 			.modal-body
-				.well
-					| Thanks for using <b>pushpop.js!</b><br><br>If <b>pushpop.js</b> is helping you out you can make a small donation here to say thanks.<br><br>Your donation is greatly appreciated and helps support <a href='https://github.com/braitsch' target='_blank'>all of my open source projects</a>.<br><br>
-					label.radio-inline
-						input(type='radio' name="donationRadios" value="100")
-						| $1
-					label.radio-inline
-						input(type='radio' name="donationRadios" value="500" checked='checked')
-						| $5
-					label.radio-inline
-						input(type='radio' name="donationRadios" value="1000")
-						| $10
-					label.radio-inline
-						input(type='radio' name="donationRadios" value="2500")
-						| $25
-					label.radio-inline
-						input(type='radio' name="donationRadios" value="5000")
-						| $50
-					.thanks
-						| Thanks!
+				| Hi! If this project is helping you out please consider making a small donation to support my work. Any amount is greatly appreciated and goes directly towards the development and maintance of <a href='https://github.com/braitsch' target='_blank'>all of my open source projects.</a>
+				.radios
+					.custom-control.custom-radio.custom-control-inline
+						input#radio1.custom-control-input(type='radio', name='donationRadios' value='100')
+						label.custom-control-label(for='radio1') $1
+					.custom-control.custom-radio.custom-control-inline
+						input#radio2.custom-control-input(type='radio', name='donationRadios' value='500' checked='checked')
+						label.custom-control-label(for='radio2') $5
+					.custom-control.custom-radio.custom-control-inline
+						input#radio3.custom-control-input(type='radio', name='donationRadios' value='1000')
+						label.custom-control-label(for='radio3') $10
+					.custom-control.custom-radio.custom-control-inline
+						input#radio4.custom-control-input(type='radio', name='donationRadios' value='2500')
+						label.custom-control-label(for='radio4') $25
+					.custom-control.custom-radio.custom-control-inline
+						input#radio5.custom-control-input(type='radio', name='donationRadios' value='5000')
+						label.custom-control-label(for='radio5') $50
 			.modal-footer
-					button(type='button', data-dismiss='modal', aria-label='Close').btn.btn-default Cancel
-					button(type="button").btn.btn-primary.btn-donate Donate
+				button(type='button' data-dismiss='modal').btn.btn-default Cancel
+				button(type='button').btn.btn-primary.btn-donate Donate
