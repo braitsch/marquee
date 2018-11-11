@@ -14,6 +14,7 @@ module.exports = function(app) {
 	app.get('/', function (req, res)
 	{	
 		res.render('index');
+		if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
 	});
 
 	app.post('/delete', function(req, res)
@@ -35,7 +36,6 @@ module.exports = function(app) {
 		form.on('file', function(type, f) { file = f; });
 		form.on('field', function(name, field) { if (name == 'crop') crop = JSON.parse(field); });
 		form.on('end', function() {
-			if (!fs.existsSync(uploads)) fs.mkdirSync(uploads);
 			mv(file.path, uploads +'/'+ fileName + '.jpg', function( e ) { 
 				if (e){
 					console.log(e);
@@ -64,7 +64,7 @@ module.exports = function(app) {
 
 	app.get('/list', function(req, res){
 		let files = [];
-		fs.readdirSync(uploads).forEach(file => { files.push(file); });
+		fs.readdirSync(uploads).forEach(file => {  files.push(file); });
 		res.send(files);
 	});
 
@@ -87,4 +87,3 @@ module.exports = function(app) {
 	});
 
 };
-
