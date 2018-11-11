@@ -1,8 +1,8 @@
 
 const marquee = require('./marquee')
 marquee.config({
-	uploads : '/public/media', // <- relative to application root 
-	keepFiles : false
+	uploads : '/public/media', // <- relative to application root
+	keepFiles : false // <- delete files after thumbnail is generated
 });
 
 module.exports = function(app) {
@@ -13,8 +13,8 @@ module.exports = function(app) {
 	});
 
 	app.post('/delete', function(req, res){
-		marquee.delete(req, function(msg){
-			res.send(msg);
+		marquee.delete(req, function(deleted){
+			res.sendStatus(200);
 		});
 	});
 

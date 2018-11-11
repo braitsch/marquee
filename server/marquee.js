@@ -62,7 +62,7 @@ exports.upload = function(req, cback)
 						height: Math.round(crop.h)
 					}).toBuffer().then(data => {
 						sharp(data).toFile(small).then(function(e, info){
-							if (fs.existsSync(large)) fs.unlinkSync(large);
+							if (!keepFiles && fs.existsSync(large)) fs.unlinkSync(large);
 							cback({ 
 								large : {path:large, name: fileName + '.jpg'}, 
 								small : {path:small, name: fileName + '_sm.jpg', base64:Buffer.from(data).toString('base64')}
@@ -78,11 +78,14 @@ exports.upload = function(req, cback)
 
 exports.delete = function(req, cback)
 {
+	let deleted = false;
 	let form = new formidable.IncomingForm();
-	form.on('end', cback);
 	form.parse(req, function(err, fields) {
 		let file = path.join(uploads, fields.file);
-		if (fs.existsSync(file)) fs.unlinkSync(file);
+		if (!keepFiles && fs.existsSync(file)) {
+			deleted = true; fs.unlinkSync(file);
+		}
+		cback(deleted);
 	});
 }
 
