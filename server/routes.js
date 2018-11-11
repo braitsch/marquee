@@ -21,8 +21,8 @@ module.exports = function(app) {
 		let form = new formidable.IncomingForm();
 		form.on('end', function() { res.send('ok'); });
 		form.parse(req, function(err, fields) {
-			let file = fields.file.substring(fields.file.lastIndexOf('/') + 1);
-			fs.unlinkSync(path.join(uploads, file), function(e){ console.log(e); });
+			let file = path.join(uploads, fields.file.substring(fields.file.lastIndexOf('/') + 1));
+			if (fs.existsSync(file)) fs.unlinkSync(file);
 		});
 	});
 
@@ -51,7 +51,7 @@ module.exports = function(app) {
 							height: Math.round(crop.h)
 						}).toBuffer().then(data => {
 							sharp(data).toFile(small).then(function(){
-								fs.unlinkSync(large);
+								if (fs.existsSync(large)) fs.unlinkSync(large);
 								res.send('/'+images+'/'+fileName+'_sm.jpg');
 							}).catch(function(e){ console.log(e); });
 						}).catch(function(e){ console.log(e); });
@@ -60,6 +60,22 @@ module.exports = function(app) {
 			});
 		});
 		form.parse(req, function(err, fields, file) {});
+	});
+
+	app.get('/list', function(req, res){
+		let files = [];
+		fs.readdirSync(uploads).forEach(file => { files.push(file); });
+		res.send(files);
+	});
+
+	app.get('/reset', function(req, res){
+		fs.readdir(uploads, (err, files) => {
+			for (const file of files) {
+				let p = path.join(uploads, file);
+				if (fs.existsSync(p)) fs.unlinkSync(p);
+			}
+			res.redirect('/list');
+		});
 	});
 
 	app.get('*', function(req, res){
