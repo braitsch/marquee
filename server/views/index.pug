@@ -2,12 +2,6 @@
 extends layout
 
 block content
-	nav.navbar.navbar-expand.navbar-light
-		.nav-item
-			a(href='https://github.com/braitsch/marquee').btn.btn-outline-dark Documentation
-		.navbar-nav.ml-auto
-			.nav-item
-				button.btn.navbar-btn.btn-outline-dark#donate Buy Me A Beer
 	.header
 		img(src='/img/logo.png' alt='Marquee').logo
 		| A simple, browser based image cropping tool similar to the marquee tool in Photoshop.
@@ -46,6 +40,5 @@ block content
 	.footer
 		a(href='https://braitsch.io') made by braitsch
 	include modal-download
-	include modal-donate
 
 
