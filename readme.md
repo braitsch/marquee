@@ -10,6 +10,10 @@
 <a href='https://image-crop.herokuapp.com/'><img src="./public/img/demo.png" alt="Marquee" width="600"/></a>
 </p>
 
+## Live Demo
+
+[It's running in a free Heroku sandbox and may take a moment to wake up.](https://image-crop.herokuapp.com/)
+
 ## Installation
 
 Marquee is two parts: 1/ An NPM module that runs on the server which handles file uploads and image processing and 2/ A client side UI that runs in the browser.
