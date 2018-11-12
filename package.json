@@ -1,21 +1,18 @@
 {
-  "name": "pushpop-heroku",
+  "name": "marquee",
   "version": "1.0.0",
-  "description": "Sample App",
+  "description": "A lightweight image cropping tool and thumbnail generator for Node.js",
   "author": "Stephen Braitsch <stephen@braitsch.io>",
   "repository": {
     "type": "git",
-    "url": "git@github.com:braitsch/pushpop.js.git"
+    "url": "git@github.com:braitsch/marquee.git"
   },
+  "license": "MIT",
   "dependencies": {
+    "@braitsch/marquee": "^1.0.0",
     "body-parser": "^1.18.3",
-    "cron": "^1.5.0",
     "express": "^4.16.4",
-    "formidable": "^1.2.1",
-    "mv": "^2.1.1",
     "pug": "^2.0.3",
-    "pushpop": "^1.0.1",
-    "sharp": "^0.21.0",
     "stripe": "^6.13.0"
   },
   "engines": {

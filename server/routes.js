@@ -1,5 +1,5 @@
 
-const marquee = require('./marquee')
+const marquee = require('@braitsch/marquee');
 marquee.config({
 	uploads : '/public/media', // <- relative to application root
 	keepFiles : false // <- delete files after thumbnail is generated
