@@ -94,7 +94,7 @@ To include the download modal in your app add the following HTML to your page.
 </div>
 ```
 
-**Note:** The download modal <u>does</u> require [Twitter Bootstrap's Javascript library](https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js) which you can simply include at the bottom of your page:
+**Note:** The download modal <u>does</u> require [Twitter Bootstrap's Javascript library](https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js) which you can simply add to the bottom of your page:
 
 ```html
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
@@ -107,8 +107,8 @@ To include the download modal in your app add the following HTML to your page.
 
 All of the aforementioned HTML is also included as [pug templates](https://pugjs.org/api/getting-started.html) if that's your thing.
 
-* [index.pug](https://github.com/braitsch/marquee/server/views/index.pug)
-* [modal-download.pug](https://github.com/braitsch/marquee/server/views/modal-download.pug)
+* [index.pug](https://github.com/braitsch/marquee/blob/master/server/views/index.pug)
+* [modal-download.pug](https://github.com/braitsch/marquee/blob/master/server/views/modal-download.pug)
 
 ## NPM Module & API
 
@@ -123,7 +123,7 @@ Once **Marquee** is installed you can include it in your server side application
 ### marquee.config
 Takes an object with the following properties:
 
-* ``uploads`` Path to where you want to save your images. Path must be relative to the root of your application. Defaults to ``"/server/uploads"``
+* ``uploads`` Path to the directory where you want to save your images. Path must be relative to the root of your application. Defaults to ``/server/uploads``
 * ``keepFiles`` Whether or not to keep the original and cropped images on the server. If you are using Marquee inside of a CMS you'll probably want to set ``keepFiles`` to ``true``. The default setting in the demo is ``false``.
 
 ```Javascript
