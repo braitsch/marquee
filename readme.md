@@ -18,14 +18,11 @@
 
 Marquee is two parts: 1/ An NPM module that runs on the server which handles file uploads and image processing and 2/ A client side UI that runs in the browser.
 
-Setting up the client side UI is as simple as copying the HTML below and including ``marquee.css`` & ``marquee.js`` at the top and bottom of the page.
+Setting up the client side UI is as simple as copying and pasting the HTML below.
 
 ## Marquee UI
 
 ```html
-// head
-<link rel="stylesheet" href="/css/marquee.css">
-// body 
 <div id="marquee">
   <div class="viewer">
     <img>
@@ -64,11 +61,25 @@ Setting up the client side UI is as simple as copying the HTML below and includi
   <button class="btn btn-success btn-select">Select Image</button>
   <button class="btn btn-primary btn-upload">Generate Thumbnail</button>
 </div>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-<script src="/js/marquee.js"></script>
 ```
 
-The demo app uses [Twitter Bootstrap](https://getbootstrap.com/) to skin the UI. This is purely for aesthetic reasons and is not required for the demo to function. If you'd like to include it (recommended) place a link to it at the top of your page.
+And including ``marquee.css`` & ``marquee.js`` at the top and bottom of the page.
+
+```html
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/marquee.css">
+  </head>
+  <body>
+  <!–– Marquee HTML -->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="/js/marquee.js"></script>
+  </body>
+</html>
+```
+
+
+The demo app uses [Twitter Bootstrap](https://getbootstrap.com/) to skin the UI. This is purely for aesthetic reasons and is not required for the demo to function. If you'd like to include it (recommended) add a link to it above ``marquee.css``.
 
 ```
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
@@ -79,7 +90,7 @@ The demo app uses [Twitter Bootstrap](https://getbootstrap.com/) to skin the UI.
 
 At its core **Marquee** allows you to upload an image and define crop boundaries to generate a thumbnail of that image. The demo includes an optional download modal which displays the generated thumbnail and, you guessed it, allows you to download it. If you are using this module inside of a CMS chances are you don't need this functionality.
 
-To include the download modal in your app add the following HTML to your page.
+To include the download modal in your app add the following HTML.
 
 ```html
 <div class="modal modal-download fade">
@@ -94,7 +105,7 @@ To include the download modal in your app add the following HTML to your page.
 </div>
 ```
 
-**Note:** The download modal <u>does</u> require [Twitter Bootstrap's Javascript library](https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js) which you can simply add to the bottom of your page:
+**Note:** The download modal <u>does</u> require [Twitter Bootstrap's Javascript library](https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js). To include it just add the following links above ``marquee.js``
 
 ```html
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
