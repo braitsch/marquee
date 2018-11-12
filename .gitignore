@@ -1,4 +1,5 @@
 .DS_Store
+assets
 notes.rtf
 node_modules
 public/media
