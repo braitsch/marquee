@@ -1,9 +1,12 @@
-
-<img src="./public/img/logo.png" alt="Marquee" width="200"/>
+<p align="center">
+<img src="./public/img/logo.png" alt="Marquee" width="250"/>
+</p>
 
 #### A simple, browser based image cropping tool similar to the marquee tool in Photoshop.
 
-<a href='https://image-crop.herokuapp.com/'><img src="./public/img/demo.png" alt="Marquee"/></a>
+<p align="center">
+<a href='https://image-crop.herokuapp.com/'><img src="./public/img/demo.png" alt="Marquee" width="600"/></a>
+</p>
 
 ## Installation
 
