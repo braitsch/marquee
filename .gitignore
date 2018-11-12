@@ -1,3 +1,5 @@
 .DS_Store
+notes.rtf
 node_modules
 public/media
+server/uploads
