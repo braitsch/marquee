@@ -1,9 +1,6 @@
 
 $(function() {
 
-	$donate = $('#donate');
-	$modal_dn = $('.modal-donate');
-
 	$modal_dl = $('.modal-download');
 	$modal_dl_img = $('.modal-download img');
 	$modal_dl_btn = $('.modal-download .btn');
@@ -25,10 +22,6 @@ $(function() {
 		let formData = new FormData();
 			formData.append('file', $modal_dl_img.attr('name'));
 		request.send(formData);
-	});
-
-	$donate.click(function(){
-		$modal_dn.modal('show');
 	});
 
 });

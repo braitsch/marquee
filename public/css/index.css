@@ -6,13 +6,6 @@ body {
   margin: 0 0 40px;
   background: url("/img/ice_age.png") repeat;
 }
-.navbar .btn {
-  min-width: 100px;
-  margin-right: 5px;
-}
-.navbar>.container .navbar-brand {
-  margin-left: -8px;
-}
 .header {
   color: #333;
   text-align: center;
@@ -62,10 +55,4 @@ body {
 }
 .modal-download .btn {
   width: 100%;
-}
-.modal-donate .modal-body {
-  font-size: 0.95em;
-}
-.modal-donate .radios {
-  margin: 20px 0 10px 44px;
 }

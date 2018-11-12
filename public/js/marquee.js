@@ -101,6 +101,7 @@ function Marquee(){
 
 	$select.click(function(e){  $fileInput.click(); });
 	$upload.click(function(e){
+		if (!thumb.w || !thumb.h){ alert('click & drag on image to define crop area'); return; }
 		var request = new XMLHttpRequest();
 		request.open('POST', '/upload');
 		request.upload.onprogress = function(e){
