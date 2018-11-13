@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-<a href='https://image-crop.herokuapp.com/'><img src="./public/img/demo.png" alt="Marquee" width="600"/></a>
+<a href='https://image-crop.herokuapp.com/'><img src="./public/img/demo_fixed.jpg" alt="Marquee" width="600"/></a>
 </p>
 
 ## Live Demo
