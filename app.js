@@ -14,16 +14,17 @@ app.set('views', './server/views');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
-app.use(express.static(__dirname + '/uploads'));
 
 require('./server/routes')(app);
 require('./server/stripe')(app);
 
-const exec = require('child_process').exec;
-const cmpl = 'stylus -w '+__dirname+'/public/css';
-exec( cmpl, (e, stdout, stderr) => {
-	e ? console.log(e) : console.log('watching style sheet');
-});
+if (process.env.NODE_ENV != 'live'){
+	const exec = require('child_process').exec;
+	const cmpl = 'stylus -w '+__dirname+'/public/css';
+	exec( cmpl, (e, stdout, stderr) => {
+		e ? console.log(e) : console.log('watching style sheet');
+	});
+}
 
 http.listen(app.get('port'), function(q, r)
 {
